@@ -1,7 +1,7 @@
 import pygame
 from settings import WIDTH, HEIGHT, FPS
-from character import Main_character
-from particles import draw_particles, update_particles
+from characters import Main_character
+from platforms import Platform
 
 class Game:
     def __init__(self):
@@ -10,11 +10,16 @@ class Game:
         pygame.display.set_caption("CubeRoll")
         self.running = True
         self.clock = pygame.time.Clock()
-        
+
+        self.platforms_sprites = pygame.sprite.Group()
+        self.platforms_sprites.add(Platform(0, 435.6, 48, 48))
+        self.platforms_sprites.add(Platform(45, 435.6, 48, 48))
+        self.platforms_sprites.add(Platform(91, 435.6, 48, 48))
+
         self.all_sprites = pygame.sprite.Group()
-        
-        self.player = Main_character(0, 400)
+        self.player = Main_character(0, 390, self.platforms_sprites)
         self.all_sprites.add(self.player)
+
 
     def events(self):
         for event in pygame.event.get():
@@ -40,7 +45,6 @@ class Game:
         self.screen.fill((0, 0, 0))  
         self.all_sprites.draw(self.screen)  
         self.player.draw_hitbox(self.screen)
-        draw_particles(self.screen)
         pygame.display.flip() 
 
 if __name__ == '__main__':
