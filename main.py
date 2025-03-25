@@ -10,11 +10,9 @@ class Game:
         self.running = True
         self.clock = pygame.time.Clock()
         
-        # Grupo de sprites para manejar todos los objetos del juego
         self.all_sprites = pygame.sprite.Group()
         
-        # Crear el personaje principal y agregarlo al grupo
-        self.player = Main_character(50, 50)
+        self.player = Main_character(0, 400)
         self.all_sprites.add(self.player)
 
     def events(self):
@@ -39,6 +37,7 @@ class Game:
     def draw(self):
         self.screen.fill((0, 0, 0))  
         self.all_sprites.draw(self.screen)  
+        self.player.draw_hitbox(self.screen)
         pygame.display.flip() 
 
 if __name__ == '__main__':
