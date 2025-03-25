@@ -1,6 +1,7 @@
 import pygame
 from settings import WIDTH, HEIGHT, FPS
 from character import Main_character
+from particles import draw_particles, update_particles
 
 class Game:
     def __init__(self):
@@ -32,12 +33,14 @@ class Game:
         pygame.quit()
     
     def update(self):
-        self.all_sprites.update()  
+        self.all_sprites.update()
+        update_particles()
         
     def draw(self):
         self.screen.fill((0, 0, 0))  
         self.all_sprites.draw(self.screen)  
         self.player.draw_hitbox(self.screen)
+        draw_particles(self.screen)
         pygame.display.flip() 
 
 if __name__ == '__main__':
