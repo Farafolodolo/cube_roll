@@ -14,6 +14,10 @@ class Main_character(pygame.sprite.Sprite):
         self.image = pygame.transform.flip(self.animations[self.frame_index], self.flip, False)
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
+
+        self.hitbox = pygame.Surface((34,34))
+        self.rect_hitbox = self.hitbox.get_rect()
+        self.rect_hitbox.topleft = (x+4,y+5)
         
     def update(self):
         self.update_position()
@@ -24,17 +28,21 @@ class Main_character(pygame.sprite.Sprite):
 
         if keys[pygame.K_LEFT]:
             self.rect.x -= MAIN_CHARACTER_SPEED
+            self.rect_hitbox.x -= MAIN_CHARACTER_SPEED
             self.flip = True 
             running = True
             if self.rect.x < 0:
                 self.rect.x = 0
+                self.rect_hitbox.x = self.rect.x + 4
 
         if keys[pygame.K_RIGHT]:
             self.rect.x += MAIN_CHARACTER_SPEED
+            self.rect_hitbox.x += MAIN_CHARACTER_SPEED
             self.flip = False  
             running = True
             if self.rect.x > 758.4:
                 self.rect.x = 758.4 
+                self.rect_hitbox.x = self.rect.x + 4
         
         if running:
             self.run_animation()
@@ -62,4 +70,4 @@ class Main_character(pygame.sprite.Sprite):
         return frames  
 
     def draw_hitbox(self, screen):
-        pygame.draw.rect(screen, (255, 0, 0), self.rect, 2)
+        pygame.draw.rect(screen, (255, 0, 0), self.rect_hitbox, 2)
