@@ -3,14 +3,14 @@ from settings import MAIN_CHARACTER_SPEED, MAIN_CHARACTER_SCALE, GRAVITY, MAIN_C
 from utils import scale_img, load_frames
 
 class Main_character(pygame.sprite.Sprite):
-    def __init__(self, x, y, platforms):
+    def __init__(self, x, y, platforms, apples):
         super().__init__() 
         self.run_image = pygame.image.load("assets/main_character/Run.png").convert_alpha()
         self.animations = load_frames(self.run_image, 32, 32, 12)
         self.frame_index = 0
         self.update_time = pygame.time.get_ticks()
 
-        self.live = 100
+        self.live = 75
 
         self.flip = False
         self.image = pygame.transform.flip(self.animations[self.frame_index], self.flip, False)
@@ -25,10 +25,16 @@ class Main_character(pygame.sprite.Sprite):
         self.vel_y = 0 
         self.on_ground = False 
 
-    def update(self):
-        self.update_position()
+        self.apples = apples
+        self.inventory = []
+        self.apple_touched = False
+        self.apple_touched_to_eliminate = object
 
-    def update_position(self):
+    def update(self):
+        self.update_keys()
+        self.collides()
+
+    def update_keys(self):
         keys = pygame.key.get_pressed()
         running = False 
 
@@ -60,15 +66,30 @@ class Main_character(pygame.sprite.Sprite):
         if keys[pygame.K_SPACE] and self.on_ground:
             self.vel_y = -MAIN_CHARACTER_JUMP 
 
+        if keys[pygame.K_k]:
+            print('The inventory: ', len(self.inventory))
+            print('The live: ', self.live)
+
+        if keys[pygame.K_h]:
+            if self.inventory:
+                if self.live < 100:
+                    self.live += 25
+                if self.live > 100:
+                    self.live = 100
+                
+                self.inventory.pop(0)
+        
+                
+
         self.rect.y += self.vel_y
         self.rect_hitbox.y += self.vel_y
 
         self.on_ground = False
         for platform in self.platforms:
-            if self.rect_hitbox.colliderect(platform.rect):  
-                if self.vel_y > 0 and prev_y + self.rect.height <= platform.rect.top:
-                    self.rect.bottom = platform.rect.top
-                    self.rect_hitbox.bottom = platform.rect.top
+            if self.rect_hitbox.colliderect(platform.rect_hitbox):  
+                if self.vel_y > 0 and prev_y + self.rect.height <= platform.rect_hitbox.top:
+                    self.rect.bottom = platform.rect_hitbox.top
+                    self.rect_hitbox.bottom = platform.rect_hitbox.top
                     self.vel_y = 0 
                     self.on_ground = True
                 elif prev_x + self.rect.width <= platform.rect.left:  
@@ -84,6 +105,14 @@ class Main_character(pygame.sprite.Sprite):
             self.frame_index = 0
             self.image = pygame.transform.flip(self.animations[self.frame_index], self.flip, False)
 
+    def collides(self):
+        self.apple_touched = False
+        for apple in self.apples:
+            if self.rect_hitbox.colliderect(apple.rect_hitbox):
+                if len(self.inventory) < 3:
+                    self.inventory.append(apple)
+                    self.apple_touched_to_eliminate = apple
+                    self.apple_touched = True
 
     def run_animation(self):
         cooldown_animation = 50  

@@ -19,17 +19,18 @@ class Game:
         self.platforms_sprites = pygame.sprite.Group()
         self.platforms_sprites.add(Platform(0, 435.6, 48, 48))
         self.platforms_sprites.add(Platform(45, 435.6, 48, 48))
-        self.platforms_sprites.add(Platform(91, 435.6, 48, 48))
+        self.platforms_sprites.add(Platform(90, 435.6, 48, 48))
         self.platforms_sprites.add(Platform(300, 435.6, 48, 48))
         self.platforms_sprites.add(Platform(345, 435.6, 48, 48))
 
         self.all_sprites = pygame.sprite.Group()
-        self.player = Main_character(0, 390, self.platforms_sprites)
-        self.all_sprites.add(self.player)
+        self.sprite_items = pygame.sprite.Group()
 
         self.apple1 = Apple(30,400)
-        self.all_sprites.add(self.apple1)
+        self.sprite_items.add(self.apple1)
 
+        self.player = Main_character(0, 390, self.platforms_sprites, self.sprite_items)
+        self.all_sprites.add(self.player)
 
     def events(self):
         for event in pygame.event.get():
@@ -49,17 +50,22 @@ class Game:
     
     def update(self):
         self.all_sprites.update()
+        self.sprite_items.update()
+        if self.player.apple_touched:
+            self.sprite_items.remove(self.player.apple_touched_to_eliminate)
         update_particles()
         
     def draw(self):
         self.screen.fill((0, 0, 0)) 
         self.screen.blit(self.background_image, (0,0)) 
-        self.all_sprites.draw(self.screen)  
+        self.all_sprites.draw(self.screen)
+        self.sprite_items.draw(self.screen)  
         #self.player.draw_hitbox(self.screen)
         #self.apple1.draw_hitbox(self.screen)
         draw_particles(self.screen)
         for platform in self.platforms_sprites:
             self.screen.blit(platform.image, platform.rect.topleft)
+            #platform.draw_hitbox(self.screen)
         pygame.display.flip() 
 
 if __name__ == '__main__':
