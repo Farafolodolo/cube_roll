@@ -3,6 +3,7 @@ from settings import WIDTH, HEIGHT, FPS
 from characters import Main_character
 from platforms import Platform
 from items import Apple
+from particles import draw_particles, update_particles
 
 class Game:
     def __init__(self):
@@ -56,6 +57,7 @@ class Game:
         self.all_sprites.draw(self.screen)  
         #self.player.draw_hitbox(self.screen)
         #self.apple1.draw_hitbox(self.screen)
+        draw_particles(self.screen)
         for platform in self.platforms_sprites:
             self.screen.blit(platform.image, platform.rect.topleft)
         pygame.display.flip() 
